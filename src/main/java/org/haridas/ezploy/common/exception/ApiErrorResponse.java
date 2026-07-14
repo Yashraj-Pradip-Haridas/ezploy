@@ -5,10 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.haridas.ezploy.common.enums.ErrorCode;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -16,9 +15,13 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class ApiErrorResponse{
 
+    public ApiErrorResponse(OffsetDateTime timestamp, int status ,ErrorCode errorCode, String message, String path) {
+        this(timestamp, status, errorCode, message, path, null);
+    }
     private OffsetDateTime timestamp;
     private int status;
     private ErrorCode errorCode;
     private String message;
     private String path;
+    Map<String, String> fieldErrors;
 }
