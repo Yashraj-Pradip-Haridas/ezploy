@@ -1,9 +1,8 @@
-package org.haridas.ezploy.repo;
+package org.haridas.ezploy.project.repo;
 
 
-import org.haridas.ezploy.model.Project;
+import org.haridas.ezploy.project.model.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 

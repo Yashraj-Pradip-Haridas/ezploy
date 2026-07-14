@@ -1,4 +1,4 @@
-package org.haridas.ezploy.enums;
+package org.haridas.ezploy.project.enums;
 
 public enum Framework {
     REACT,

@@ -1,13 +1,13 @@
-package org.haridas.ezploy.mapper;
+package org.haridas.ezploy.project.mapper;
 
-import org.haridas.ezploy.dto.response.ProjectResponse;
-import org.haridas.ezploy.model.Project;
+import org.haridas.ezploy.project.dto.response.ProjectResponse;
+import org.haridas.ezploy.project.model.Project;
 import org.springframework.stereotype.Component;
-import org.haridas.ezploy.dto.request.CreateProjectRequest;
+import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 @Component
 public class ProjectMapper {
 
-    public Project toProject(CreateProjectRequest request){
+    public Project toEntity(CreateProjectRequest request){
         Project project = new Project();
         project.setName( request.getName());
         project.setDescription(request.getDescription());
@@ -16,7 +16,7 @@ public class ProjectMapper {
         return project;
     }
 
-    public ProjectResponse toProjectResponse(Project project){
+    public ProjectResponse toResponse(Project project){
 
         ProjectResponse projectResponse =  new ProjectResponse();
         projectResponse.setId(project.getId());
@@ -24,6 +24,8 @@ public class ProjectMapper {
         projectResponse.setDescription(project.getDescription());
         projectResponse.setRepositoryUrl(project.getRepositoryUrl());
         projectResponse.setFramework(project.getFramework());
+        projectResponse.setCreatedAt(project.getCreatedAt());
+        projectResponse.setUpdatedAt(project.getUpdatedAt());
         return projectResponse;
     }
 

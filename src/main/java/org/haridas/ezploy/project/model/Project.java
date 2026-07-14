@@ -1,11 +1,10 @@
-package org.haridas.ezploy.model;
+package org.haridas.ezploy.project.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.haridas.ezploy.enums.Framework;
+import org.haridas.ezploy.project.enums.Framework;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 

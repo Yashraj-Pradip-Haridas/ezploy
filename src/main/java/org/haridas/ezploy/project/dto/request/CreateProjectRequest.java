@@ -1,4 +1,4 @@
-package org.haridas.ezploy.dto.request;
+package org.haridas.ezploy.project.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.haridas.ezploy.enums.Framework;
+import org.haridas.ezploy.project.enums.Framework;
 
 @Getter
 @Setter

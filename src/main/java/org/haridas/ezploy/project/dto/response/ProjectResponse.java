@@ -1,10 +1,11 @@
-package org.haridas.ezploy.dto.response;
+package org.haridas.ezploy.project.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.haridas.ezploy.enums.Framework;
+import org.haridas.ezploy.project.enums.Framework;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Getter
@@ -17,4 +18,6 @@ public class ProjectResponse {
     private String description;
     private String repositoryUrl;
     private Framework framework;
+    private OffsetDateTime createdAt;
+    private OffsetDateTime updatedAt;
 }
