@@ -9,6 +9,13 @@ import org.haridas.ezploy.enums.Framework;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+/*
+* When Hibernate fetches a row from your database,
+* it uses Reflection to create an empty Java object first using the no-arg constructor.
+* Then, it uses setters or direct field access to inject the column values into that
+* object.
+*/
+
 @Getter
 @Setter
 @NoArgsConstructor
