@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RequestMapping("/api/v1")
 @RestController
 public class ProjectController {
@@ -21,5 +24,15 @@ public class ProjectController {
     @PostMapping("/projects")
     public ResponseEntity<ProjectResponse> createProject(@Valid  @RequestBody CreateProjectRequest createProjectRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(createProjectRequest));
+    }
+
+    @GetMapping("/projects/{projectId}")
+    public ResponseEntity<ProjectResponse> getProject(@PathVariable UUID projectId) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getProject(projectId));
+    }
+
+    @GetMapping("/projects")
+    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects());
     }
 }

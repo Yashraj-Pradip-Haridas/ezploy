@@ -1,5 +1,6 @@
 package org.haridas.ezploy.project.service.impl;
 
+import org.haridas.ezploy.common.exception.ProjectNotFoundException;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.mapper.ProjectMapper;
@@ -8,6 +9,7 @@ import org.haridas.ezploy.project.repo.ProjectRepository;
 import org.haridas.ezploy.project.service.ProjectService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,5 +32,19 @@ public class ProjectServiceImpl implements ProjectService {
         project.setId(UUID.randomUUID());
         project = projectRepository.save(project);
         return projectMapper.toResponse(project);
+    }
+
+    @Override
+    public ProjectResponse getProject(UUID projectId) {
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(()-> new ProjectNotFoundException(projectId));
+        return projectMapper.toResponse(project);
+    }
+
+    @Override
+    public List<ProjectResponse> getAllProjects() {
+        List<Project> projects = projectRepository.findAll();
+         return projects.stream().map(projectMapper::toResponse).toList();
     }
 }
