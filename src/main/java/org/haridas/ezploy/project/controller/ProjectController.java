@@ -8,6 +8,8 @@ import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.service.ProjectService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +40,11 @@ public class ProjectController {
     public ResponseEntity<ProjectPageResponse> getAllProjects(
             @RequestParam(required = false) Framework framework,
             @RequestParam(required = false) String name,
-            Pageable pageable) {
+            @PageableDefault(
+                    sort = "createdAt",
+                    direction = Sort.Direction.DESC
+            )
+            Pageable pageable, Sort sort) {
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(framework, name, pageable));
     }
 
