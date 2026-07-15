@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -62,13 +63,13 @@ public class ProjectServiceImpl implements ProjectService {
          return projectMapper.toPageResponse(page);
     }
 
+    @Transactional
     @Override
     public ProjectResponse updateProject(UUID projectId, UpdateProjectRequest request){
         Project existingProject = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException(projectId));
 
         projectMapper.updateEntity(request, existingProject);
-        existingProject = projectRepository.save(existingProject);
         return projectMapper.toResponse(existingProject);
     }
 
