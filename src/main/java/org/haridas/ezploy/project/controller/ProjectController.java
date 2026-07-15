@@ -5,6 +5,8 @@ import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.service.ProjectService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,8 @@ public class ProjectController {
     }
 
     @GetMapping("/projects")
-    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects());
+    public ResponseEntity<Page<ProjectResponse>> getAllProjects(Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(pageable));
     }
 
     @PutMapping("/projects/{id}")

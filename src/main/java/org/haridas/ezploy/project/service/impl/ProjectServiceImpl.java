@@ -8,6 +8,9 @@ import org.haridas.ezploy.project.mapper.ProjectMapper;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
 import org.haridas.ezploy.project.service.ProjectService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +47,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public List<ProjectResponse> getAllProjects() {
-        List<Project> projects = projectRepository.findAll();
-         return projects.stream().map(projectMapper::toResponse).toList();
+    public Page<ProjectResponse> getAllProjects(Pageable pageable) {
+//        List<Project> projects = projectRepository.findAll();
+        Page<Project> page = projectRepository.findAll(pageable);
+         return page.map(projectMapper::toResponse);
     }
 
     @Override
