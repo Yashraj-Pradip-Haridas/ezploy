@@ -3,6 +3,7 @@ package org.haridas.ezploy.project.controller;
 import jakarta.validation.Valid;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
+import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.service.ProjectService;
 import org.springframework.data.domain.Page;
@@ -35,7 +36,7 @@ public class ProjectController {
     }
 
     @GetMapping("/projects")
-    public ResponseEntity<Page<ProjectResponse>> getAllProjects(Pageable pageable) {
+    public ResponseEntity<ProjectPageResponse> getAllProjects(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(pageable));
     }
 

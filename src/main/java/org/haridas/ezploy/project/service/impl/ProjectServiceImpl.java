@@ -3,17 +3,16 @@ package org.haridas.ezploy.project.service.impl;
 import org.haridas.ezploy.common.exception.ProjectNotFoundException;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
+import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.mapper.ProjectMapper;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
 import org.haridas.ezploy.project.service.ProjectService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -47,10 +46,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectResponse> getAllProjects(Pageable pageable) {
+    public ProjectPageResponse getAllProjects(Pageable pageable) {
 //        List<Project> projects = projectRepository.findAll();
         Page<Project> page = projectRepository.findAll(pageable);
-         return page.map(projectMapper::toResponse);
+         return projectMapper.toPageResponse(page);
     }
 
     @Override
