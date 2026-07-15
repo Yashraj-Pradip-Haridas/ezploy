@@ -5,6 +5,7 @@ import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
+import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.mapper.ProjectMapper;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
@@ -46,9 +47,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectPageResponse getAllProjects(Pageable pageable) {
+    public ProjectPageResponse getAllProjects(Framework framework, Pageable pageable) {
 //        List<Project> projects = projectRepository.findAll();
-        Page<Project> page = projectRepository.findAll(pageable);
+        Page<Project> page = framework == null ? projectRepository.findAll(pageable):
+                projectRepository.findByFramework(framework,pageable);
          return projectMapper.toPageResponse(page);
     }
 

@@ -5,14 +5,13 @@ import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
+import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.service.ProjectService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("/api/v1")
@@ -36,8 +35,10 @@ public class ProjectController {
     }
 
     @GetMapping("/projects")
-    public ResponseEntity<ProjectPageResponse> getAllProjects(Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(pageable));
+    public ResponseEntity<ProjectPageResponse> getAllProjects(
+            @RequestParam(required = false) Framework framework,
+            Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(framework, pageable));
     }
 
     @PutMapping("/projects/{id}")
