@@ -2,6 +2,7 @@ package org.haridas.ezploy.project.controller;
 
 import jakarta.validation.Valid;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
+import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.service.ProjectService;
 import org.springframework.http.HttpStatus;
@@ -34,5 +35,13 @@ public class ProjectController {
     @GetMapping("/projects")
     public ResponseEntity<List<ProjectResponse>> getAllProjects() {
         return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects());
+    }
+
+    @PutMapping("/projects/{id}")
+    public ResponseEntity<ProjectResponse> updateProject(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateProjectRequest request) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.updateProject(id, request));
     }
 }

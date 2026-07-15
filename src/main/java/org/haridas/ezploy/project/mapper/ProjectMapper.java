@@ -1,5 +1,6 @@
 package org.haridas.ezploy.project.mapper;
 
+import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.model.Project;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,13 @@ public class ProjectMapper {
         projectResponse.setCreatedAt(project.getCreatedAt());
         projectResponse.setUpdatedAt(project.getUpdatedAt());
         return projectResponse;
+    }
+
+    public void updateEntity(UpdateProjectRequest request, Project project){
+        project.setName( request.getName());
+        project.setDescription(request.getDescription());
+        project.setRepositoryUrl(request.getRepositoryUrl());
+        project.setFramework(request.getFramework());
     }
 
 
