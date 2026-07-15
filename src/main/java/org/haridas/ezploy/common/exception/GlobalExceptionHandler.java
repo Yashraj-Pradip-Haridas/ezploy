@@ -8,11 +8,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -55,6 +55,31 @@ public class GlobalExceptionHandler {
     ){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 buildError(HttpStatus.BAD_REQUEST,ErrorCode.INVALID_REQUEST,"Invalid request body",request,
+                        Collections.emptyMap())
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request){
+        String message = String.format(
+                "Invalid value '%s' for parameter '%s'.",
+                ex.getValue(),
+                ex.getName()
+        );
+
+        Class<?> requiredType = ex.getRequiredType();
+
+        if (requiredType != null && requiredType.isEnum()) {
+
+            String supportedValues = Arrays.stream(requiredType.getEnumConstants())
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "));
+
+            message += " Supported values: " + supportedValues + ".";
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                buildError(HttpStatus.BAD_REQUEST,ErrorCode.INVALID_REQUEST,
+                        message,request,
                         Collections.emptyMap())
         );
     }
