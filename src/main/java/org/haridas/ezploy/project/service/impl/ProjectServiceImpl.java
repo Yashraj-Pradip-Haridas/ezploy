@@ -10,8 +10,10 @@ import org.haridas.ezploy.project.mapper.ProjectMapper;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
 import org.haridas.ezploy.project.service.ProjectService;
+import org.haridas.ezploy.project.specification.ProjectSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -47,10 +49,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectPageResponse getAllProjects(Framework framework, Pageable pageable) {
-//        List<Project> projects = projectRepository.findAll();
-        Page<Project> page = framework == null ? projectRepository.findAll(pageable):
-                projectRepository.findByFramework(framework,pageable);
+    public ProjectPageResponse getAllProjects(Framework framework,String name, Pageable pageable) {
+        Specification<Project> spec = Specification.allOf();
+        if(framework != null){
+            spec = spec.and(ProjectSpecification.hasFramework(framework));
+        }
+        if(name != null && !name.isBlank()){
+            spec = spec.and(ProjectSpecification.hasName(name));
+        }
+
+        Page<Project> page = projectRepository.findAll(spec, pageable);
          return projectMapper.toPageResponse(page);
     }
 

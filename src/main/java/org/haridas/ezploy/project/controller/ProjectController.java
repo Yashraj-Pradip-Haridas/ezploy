@@ -37,8 +37,9 @@ public class ProjectController {
     @GetMapping("/projects")
     public ResponseEntity<ProjectPageResponse> getAllProjects(
             @RequestParam(required = false) Framework framework,
+            @RequestParam(required = false) String name,
             Pageable pageable) {
-        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(framework, pageable));
+        return ResponseEntity.status(HttpStatus.OK).body(projectService.getAllProjects(framework, name, pageable));
     }
 
     @PutMapping("/projects/{id}")
