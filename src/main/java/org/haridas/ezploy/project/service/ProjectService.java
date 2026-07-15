@@ -14,4 +14,5 @@ public interface ProjectService {
     ProjectResponse getProject(UUID projectId);
     List<ProjectResponse> getAllProjects();
     ProjectResponse updateProject(UUID projectId,UpdateProjectRequest request);
+    void deleteProject(UUID projectId);
 }

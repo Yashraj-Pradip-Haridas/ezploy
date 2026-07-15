@@ -58,4 +58,11 @@ public class ProjectServiceImpl implements ProjectService {
         existingProject = projectRepository.save(existingProject);
         return projectMapper.toResponse(existingProject);
     }
+
+    @Override
+    public void deleteProject(UUID projectId) {
+        Project existingProject = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException(projectId));
+        projectRepository.delete(existingProject);
+    }
 }
