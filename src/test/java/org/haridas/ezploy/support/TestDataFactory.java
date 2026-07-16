@@ -1,6 +1,7 @@
 package org.haridas.ezploy.support;
 
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
+import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.model.Project;
@@ -36,6 +37,15 @@ public final class TestDataFactory {
         createProjectRequest.setFramework(FRAMEWORK);
         createProjectRequest.setRepositoryUrl(REPOSITORY);
         return createProjectRequest;
+    }
+
+    public static UpdateProjectRequest updateProjectRequest() {
+        UpdateProjectRequest updateProjectRequest = new UpdateProjectRequest();
+        updateProjectRequest.setName(NAME);
+        updateProjectRequest.setDescription(DESCRIPTION);
+        updateProjectRequest.setFramework(FRAMEWORK);
+        updateProjectRequest.setRepositoryUrl(REPOSITORY);
+        return updateProjectRequest;
     }
     public static ProjectResponse projectResponse(Project project) {
         return new ProjectResponse(

@@ -2,12 +2,14 @@ package org.haridas.ezploy.project.service;
 
 import org.haridas.ezploy.common.exception.ProjectNotFoundException;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
+import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.mapper.ProjectMapper;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
 import org.haridas.ezploy.project.service.impl.ProjectServiceImpl;
 import org.haridas.ezploy.support.TestDataFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -35,15 +37,19 @@ class ProjectServiceImplTest {
     @InjectMocks
     private ProjectServiceImpl projectService;
 
+    private Project project;
+    private ProjectResponse response;
+    private UUID projectId;
+
+    @BeforeEach
+    void setUp() {
+        project = TestDataFactory.project();
+        response = TestDataFactory.projectResponse(project);
+        projectId = project.getId();
+    }
+
     @Test
     void shouldReturnProjectWhenProjectExists() {
-
-        // Arrange
-        UUID projectId = UUID.randomUUID();
-
-        Project project = TestDataFactory.project();
-
-        ProjectResponse response = TestDataFactory.projectResponse(project);
 
         when(projectRepository.findById(projectId))
                 .thenReturn(Optional.of(project));
@@ -81,9 +87,6 @@ class ProjectServiceImplTest {
     @Test
     void shouldThrowProjectNotFoundExceptionWhenProjectDoesNotExist() {
 
-//        Arrange
-        UUID projectId = UUID.randomUUID();
-
         when(projectRepository.findById(projectId))
         .thenReturn(Optional.empty());
 
@@ -111,20 +114,15 @@ class ProjectServiceImplTest {
 
     @Test
     void shouldCreateProject() {
-        CreateProjectRequest request = TestDataFactory.createProjectRequest();
-
-        Project project = TestDataFactory.project();
-
-        ProjectResponse response = TestDataFactory.projectResponse(project);
-
-        when(projectMapper.toEntity(request)).thenReturn(project);
+        CreateProjectRequest createProjectRequest = TestDataFactory.createProjectRequest();
+        when(projectMapper.toEntity(createProjectRequest)).thenReturn(project);
         when(projectRepository.save(project)).thenReturn(project);
         when(projectMapper.toResponse(project)).thenReturn(response);
 
-        ProjectResponse actualResponse = projectService.createProject(request);
+        ProjectResponse actualResponse = projectService.createProject(createProjectRequest);
         assertThat(actualResponse).isEqualTo(response);
 
-        verify(projectMapper).toEntity(request);
+        verify(projectMapper).toEntity(createProjectRequest);
         verify(projectMapper).toResponse(project);
         ArgumentCaptor<Project> captor = ArgumentCaptor.forClass(Project.class);
         verify(projectRepository).save(captor.capture());
@@ -138,17 +136,17 @@ class ProjectServiceImplTest {
                         Project::getRepositoryUrl
                 )
                 .containsExactly(
-                        request.getName(),
-                        request.getDescription(),
-                        request.getFramework(),
-                        request.getRepositoryUrl()
+                        createProjectRequest.getName(),
+                        createProjectRequest.getDescription(),
+                        createProjectRequest.getFramework(),
+                        createProjectRequest.getRepositoryUrl()
                 );
 
         InOrder inOrder =
                 inOrder(projectMapper, projectRepository);
 
         inOrder.verify(projectMapper)
-                .toEntity(request);
+                .toEntity(createProjectRequest);
 
         inOrder.verify(projectRepository)
                 .save(any(Project.class));
@@ -161,5 +159,28 @@ class ProjectServiceImplTest {
                 projectMapper
         );
     }
+
+    @Test
+    void shouldUpdateProject() {
+        UpdateProjectRequest updateProjectRequest = TestDataFactory.updateProjectRequest();
+        when(projectRepository.findById(projectId))
+                .thenReturn(Optional.of(project));
+
+        when(projectMapper.toResponse(project))
+                .thenReturn(response);
+
+        ProjectResponse actual =
+                projectService.updateProject(projectId, updateProjectRequest);
+
+        assertThat(actual).isEqualTo(response);
+
+        verify(projectRepository).findById(projectId);
+        verify(projectMapper).updateEntity(updateProjectRequest, project);
+        verify(projectMapper).toResponse(project);
+
+        verifyNoMoreInteractions(projectRepository, projectMapper);
+    }
+
+
 
 }
