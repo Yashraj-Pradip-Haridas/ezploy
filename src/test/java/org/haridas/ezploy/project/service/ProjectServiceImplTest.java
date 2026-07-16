@@ -1,20 +1,21 @@
 package org.haridas.ezploy.project.service;
 
 import org.haridas.ezploy.common.exception.ProjectNotFoundException;
+import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
-import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.mapper.ProjectMapper;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
 import org.haridas.ezploy.project.service.impl.ProjectServiceImpl;
+import org.haridas.ezploy.support.TestDataFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,16 +41,10 @@ class ProjectServiceImplTest {
         // Arrange
         UUID projectId = UUID.randomUUID();
 
-        Project project = new Project();
-        project.setId(projectId);
-        project.setName("Ezploy");
-        project.setDescription("PaaS");
-        project.setFramework(Framework.SPRING_BOOT);
-        project.setRepositoryUrl("https://github.com/test");
-        project.setCreatedAt(OffsetDateTime.now());
-        project.setUpdatedAt(OffsetDateTime.now());
+        Project project = TestDataFactory.project();
 
-        ProjectResponse response = new ProjectResponse();
+        ProjectResponse response = TestDataFactory.projectResponse(project);
+
         when(projectRepository.findById(projectId))
                 .thenReturn(Optional.of(project));
         when(projectMapper.toResponse(project))
@@ -112,6 +107,59 @@ class ProjectServiceImplTest {
                 projectMapper
         );
 
+    }
+
+    @Test
+    void shouldCreateProject() {
+        CreateProjectRequest request = TestDataFactory.createProjectRequest();
+
+        Project project = TestDataFactory.project();
+
+        ProjectResponse response = TestDataFactory.projectResponse(project);
+
+        when(projectMapper.toEntity(request)).thenReturn(project);
+        when(projectRepository.save(project)).thenReturn(project);
+        when(projectMapper.toResponse(project)).thenReturn(response);
+
+        ProjectResponse actualResponse = projectService.createProject(request);
+        assertThat(actualResponse).isEqualTo(response);
+
+        verify(projectMapper).toEntity(request);
+        verify(projectMapper).toResponse(project);
+        ArgumentCaptor<Project> captor = ArgumentCaptor.forClass(Project.class);
+        verify(projectRepository).save(captor.capture());
+        Project savedProject = captor.getValue();
+
+        assertThat(savedProject)
+                .extracting(
+                        Project::getName,
+                        Project::getDescription,
+                        Project::getFramework,
+                        Project::getRepositoryUrl
+                )
+                .containsExactly(
+                        request.getName(),
+                        request.getDescription(),
+                        request.getFramework(),
+                        request.getRepositoryUrl()
+                );
+
+        InOrder inOrder =
+                inOrder(projectMapper, projectRepository);
+
+        inOrder.verify(projectMapper)
+                .toEntity(request);
+
+        inOrder.verify(projectRepository)
+                .save(any(Project.class));
+
+        inOrder.verify(projectMapper)
+                .toResponse(project);
+
+        verifyNoMoreInteractions(
+                projectRepository,
+                projectMapper
+        );
     }
 
 }
