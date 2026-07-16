@@ -3,6 +3,7 @@ package org.haridas.ezploy.project.service;
 import org.haridas.ezploy.common.exception.ProjectNotFoundException;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
+import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.mapper.ProjectMapper;
 import org.haridas.ezploy.project.model.Project;
@@ -17,7 +18,13 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -181,6 +188,62 @@ class ProjectServiceImplTest {
         verifyNoMoreInteractions(projectRepository, projectMapper);
     }
 
+    @Test
+    void shouldDeleteProjectWhenProjectExists(){
+        when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
+        projectService.deleteProject(projectId);
+        verify(projectRepository)
+                .findById(projectId);
 
+        verify(projectRepository)
+                .delete(project);
+        verifyNoMoreInteractions(projectRepository);
+    }
+
+    @Test
+    void shouldThrowProjectNotFoundExceptionWhenDeletingNonExistingProject(){
+        when(projectRepository.findById(projectId)).thenReturn(Optional.empty());
+        assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.deleteProject(projectId)
+        );
+        verify(projectRepository)
+                .findById(projectId);
+
+        verify(projectRepository, never())
+                .delete(any(Project.class));
+        verifyNoMoreInteractions(projectRepository);
+    }
+
+    @Test
+    void shouldReturnAllProjects() {
+
+//        Arrange
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<Project> page = new PageImpl<>(List.of(project));
+
+        ProjectPageResponse expected =
+                TestDataFactory.projectPageResponse(page);
+
+        when(projectRepository.findAll(any(Specification.class), any(Pageable.class)))
+                .thenReturn(page);
+
+        when(projectMapper.toPageResponse(page))
+                .thenReturn(expected);
+
+//        Act
+        ProjectPageResponse actual =
+                projectService.getAllProjects(null, null,pageable);
+
+//        Assert
+        assertThat(actual)
+                .isEqualTo(expected);
+
+        verify(projectRepository).findAll(any(Specification.class), eq(pageable));
+        verify(projectMapper).toPageResponse(page);
+        verifyNoMoreInteractions(projectRepository, projectMapper);
+
+    }
 
 }

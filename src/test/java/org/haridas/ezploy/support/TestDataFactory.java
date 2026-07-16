@@ -1,12 +1,16 @@
 package org.haridas.ezploy.support;
 
+import org.haridas.ezploy.common.dto.response.PaginationResponse;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
+import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.model.Project;
+import org.springframework.data.domain.Page;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 public final class TestDataFactory {
@@ -56,6 +60,32 @@ public final class TestDataFactory {
                 project.getFramework(),
                 project.getCreatedAt(),
                 project.getUpdatedAt()
+        );
+    }
+    public static PaginationResponse paginationResponse(Page<?> page) {
+        return new PaginationResponse(
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isFirst(),
+                page.isLast(),
+                page.getNumberOfElements(),
+                page.hasNext(),
+                page.hasPrevious()
+        );
+    }
+
+    public static ProjectPageResponse projectPageResponse(Page<Project> page) {
+
+        List<ProjectResponse> responses = page.getContent()
+                .stream()
+                .map(TestDataFactory::projectResponse)
+                .toList();
+
+        return new ProjectPageResponse(
+                responses,
+                paginationResponse(page)
         );
     }
 }
