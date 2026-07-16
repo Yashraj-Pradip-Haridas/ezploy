@@ -1,5 +1,6 @@
 package org.haridas.ezploy.project.service;
 
+import org.haridas.ezploy.common.exception.ProjectNotFoundException;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.mapper.ProjectMapper;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,7 +61,6 @@ class ProjectServiceImplTest {
 
         // Assert
         assertThat(actual).isEqualTo(response);
-
         InOrder inOrder =
                 inOrder(projectRepository, projectMapper);
 
@@ -74,6 +75,37 @@ class ProjectServiceImplTest {
 
         verify(projectRepository)
                 .findById(projectId);
+
+        verifyNoMoreInteractions(
+                projectRepository,
+                projectMapper
+        );
+
+    }
+
+    @Test
+    void shouldThrowProjectNotFoundExceptionWhenProjectDoesNotExist() {
+
+//        Arrange
+        UUID projectId = UUID.randomUUID();
+
+        when(projectRepository.findById(projectId))
+        .thenReturn(Optional.empty());
+
+//        Act and Assert
+        ProjectNotFoundException ex = assertThrows(
+                ProjectNotFoundException.class,
+                () -> projectService.getProject(projectId));
+
+        assertThat(ex.getMessage())
+                .isEqualTo("Project " + projectId + " not found");
+
+
+        verify(projectRepository)
+                .findById(projectId);
+
+        verify(projectMapper, never())
+                .toResponse(any());
 
         verifyNoMoreInteractions(
                 projectRepository,
