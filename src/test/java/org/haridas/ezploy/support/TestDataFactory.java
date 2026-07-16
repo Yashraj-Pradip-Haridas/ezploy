@@ -8,6 +8,8 @@ import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.model.Project;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -86,6 +88,13 @@ public final class TestDataFactory {
         return new ProjectPageResponse(
                 responses,
                 paginationResponse(page)
+        );
+    }
+    public static Page<Project> projectPage(Pageable pageable) {
+        return new PageImpl<>(
+                List.of(project()),
+                pageable,
+                1
         );
     }
 }

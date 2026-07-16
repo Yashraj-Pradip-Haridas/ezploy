@@ -246,4 +246,9 @@ class ProjectServiceImplTest {
 
     }
 
+//    Later tests to be added
+    /*
+    * shouldReturnProjectsFilteredByFramework()
+    * shouldReturnProjectsFilteredByName()
+    */
 }
