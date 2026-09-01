@@ -6,8 +6,10 @@ import org.haridas.ezploy.project.dto.request.RegisterRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
+import org.haridas.ezploy.project.dto.response.RegisterResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.model.Project;
+import org.haridas.ezploy.project.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -100,6 +102,18 @@ public final class TestDataFactory {
     }
 
     public static RegisterRequest registerRequest() {
-        return new RegisterRequest();
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("username");
+        registerRequest.setPassword("password");
+        return registerRequest;
+    }
+
+    public static RegisterResponse registerResponse(User user) {
+        return new RegisterResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getCreatedAt(),
+                user.getUpdatedAt()
+        );
     }
 }
