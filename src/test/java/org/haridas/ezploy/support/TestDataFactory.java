@@ -2,6 +2,7 @@ package org.haridas.ezploy.support;
 
 import org.haridas.ezploy.common.dto.response.PaginationResponse;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
+import org.haridas.ezploy.project.dto.request.RegisterRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
 import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
@@ -96,5 +97,9 @@ public final class TestDataFactory {
                 pageable,
                 1
         );
+    }
+
+    public static RegisterRequest registerRequest() {
+        return new RegisterRequest();
     }
 }
