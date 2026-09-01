@@ -31,6 +31,12 @@ public class GlobalExceptionHandler {
                 .body(buildError(HttpStatus.NOT_FOUND,ErrorCode.PROJECT_NOT_FOUND,ex.getMessage(),request,
                         Collections.emptyMap()));
     }
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex, HttpServletRequest request){
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(buildError(HttpStatus.CONFLICT, ErrorCode.USER_ALREADY_EXISTS, ex.getMessage(),request,
+                        Collections.emptyMap()));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpServletRequest request){
