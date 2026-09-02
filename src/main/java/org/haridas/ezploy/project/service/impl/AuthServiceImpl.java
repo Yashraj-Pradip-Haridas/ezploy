@@ -8,6 +8,7 @@ import org.haridas.ezploy.project.dto.response.RegisterResponse;
 import org.haridas.ezploy.project.enums.Role;
 import org.haridas.ezploy.project.model.User;
 import org.haridas.ezploy.project.repo.UserRepository;
+import org.haridas.ezploy.project.security.JwtService;
 import org.haridas.ezploy.project.service.AuthService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,11 +22,13 @@ public class AuthServiceImpl implements AuthService {
     final private UserRepository userRepository;
     final private PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -60,7 +63,8 @@ public class AuthServiceImpl implements AuthService {
                                 request.getPassword()
                         )
                 );
-        return new LoginResponse("TEMP_TOKEN");
+        String token = jwtService.generateToken(request.getUsername());
+        return new LoginResponse(token);
     }
 
 
