@@ -1,7 +1,9 @@
 package org.haridas.ezploy.project.service;
 
 import org.haridas.ezploy.common.exception.UserAlreadyExistsException;
+import org.haridas.ezploy.project.dto.request.LoginRequest;
 import org.haridas.ezploy.project.dto.request.RegisterRequest;
+import org.haridas.ezploy.project.dto.response.LoginResponse;
 import org.haridas.ezploy.project.dto.response.RegisterResponse;
 import org.haridas.ezploy.project.enums.Role;
 import org.haridas.ezploy.project.model.User;
@@ -14,6 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
@@ -35,6 +39,9 @@ public class AuthServiceImplTest {
 
     @InjectMocks
     private AuthServiceImpl authService;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
 
     @Test
     void shouldCreateUser() {
@@ -116,4 +123,33 @@ public class AuthServiceImplTest {
         verify(userRepository, never())
                 .save(any());
     }
+
+    @Test
+    void shouldLogin(){
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername("username");
+        loginRequest.setPassword("password");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+        .thenReturn(new UsernamePasswordAuthenticationToken("username", "password"));
+
+        LoginResponse actual = authService.login(loginRequest);
+        assertThat(actual.getToken()).isEqualTo("TEMP_TOKEN");
+
+        ArgumentCaptor<UsernamePasswordAuthenticationToken> captor =
+                ArgumentCaptor.forClass(UsernamePasswordAuthenticationToken.class);
+
+        verify(authenticationManager).authenticate(captor.capture());
+
+        UsernamePasswordAuthenticationToken token = captor.getValue();
+
+        assertThat(token.getPrincipal()).isEqualTo("username");
+        assertThat(token.getCredentials()).isEqualTo("password");
+
+        verifyNoMoreInteractions(
+                authenticationManager
+        );
+    }
+
+//    Write pending tests for invalid request and bad credentials
+
 }

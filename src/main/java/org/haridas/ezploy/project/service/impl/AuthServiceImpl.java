@@ -1,12 +1,17 @@
 package org.haridas.ezploy.project.service.impl;
 
 import org.haridas.ezploy.common.exception.UserAlreadyExistsException;
+import org.haridas.ezploy.project.dto.request.LoginRequest;
 import org.haridas.ezploy.project.dto.request.RegisterRequest;
+import org.haridas.ezploy.project.dto.response.LoginResponse;
 import org.haridas.ezploy.project.dto.response.RegisterResponse;
 import org.haridas.ezploy.project.enums.Role;
 import org.haridas.ezploy.project.model.User;
 import org.haridas.ezploy.project.repo.UserRepository;
 import org.haridas.ezploy.project.service.AuthService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +20,12 @@ public class AuthServiceImpl implements AuthService {
 
     final private UserRepository userRepository;
     final private PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
@@ -42,6 +49,18 @@ public class AuthServiceImpl implements AuthService {
                 savedUser.getCreatedAt(),
                 savedUser.getUpdatedAt()
         );
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request){
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.getUsername(),
+                                request.getPassword()
+                        )
+                );
+        return new LoginResponse("TEMP_TOKEN");
     }
 
 

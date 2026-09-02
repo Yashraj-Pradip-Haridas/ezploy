@@ -1,7 +1,9 @@
 package org.haridas.ezploy.project.controller;
 
 import jakarta.validation.Valid;
+import org.haridas.ezploy.project.dto.request.LoginRequest;
 import org.haridas.ezploy.project.dto.request.RegisterRequest;
+import org.haridas.ezploy.project.dto.response.LoginResponse;
 import org.haridas.ezploy.project.dto.response.RegisterResponse;
 import org.haridas.ezploy.project.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(registerRequest));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest loginRequest) {
+
+        return ResponseEntity
+                .ok(authService.login(loginRequest));
     }
 
 
