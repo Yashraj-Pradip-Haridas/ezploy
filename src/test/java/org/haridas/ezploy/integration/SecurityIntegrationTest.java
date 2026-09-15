@@ -3,6 +3,7 @@ package org.haridas.ezploy.integration;
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.LoginRequest;
 import org.haridas.ezploy.project.dto.response.LoginResponse;
+import org.haridas.ezploy.project.repo.ProjectRepository;
 import org.haridas.ezploy.project.repo.UserRepository;
 import org.haridas.ezploy.support.TestDataFactory;
 import org.haridas.ezploy.support.TestDatabaseConfiguration;
@@ -26,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
+@Import(TestDatabaseConfiguration.class)
 class SecurityIntegrationTest {
 
     @Autowired
@@ -37,8 +40,12 @@ class SecurityIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
     @BeforeEach
     void setUp() {
+        userRepository.deleteAll();
         userRepository.deleteAll();
     }
     private String registerAndLogin() throws Exception {

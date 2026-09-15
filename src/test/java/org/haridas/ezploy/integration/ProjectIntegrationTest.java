@@ -6,10 +6,12 @@ import org.haridas.ezploy.project.dto.response.LoginResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
+import org.haridas.ezploy.project.repo.UserRepository;
 import org.haridas.ezploy.support.TestDataFactory;
 
 import org.haridas.ezploy.support.TestDatabaseConfiguration;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @ActiveProfiles("test")
 @Import(TestDatabaseConfiguration.class)
 public class ProjectIntegrationTest {
@@ -49,11 +50,20 @@ public class ProjectIntegrationTest {
     @Autowired
     private ProjectRepository projectRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @BeforeAll
     static void setTimeZone() {
         TimeZone.setDefault(
                 TimeZone.getTimeZone("Asia/Kolkata")
         );
+    }
+
+    @BeforeEach
+    void setUp() {
+        projectRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -273,12 +283,7 @@ public class ProjectIntegrationTest {
                         .value("Project " + projectId + " not found"));
     }
 
-//    @Test
-//    void shouldStartWithEmptyDatabase() {
-//
-//        assertThat(projectRepository.count())
-//                .isZero();
-//    }
+
 
     @Test
     void shouldReturnPaginatedProjects() throws Exception {
