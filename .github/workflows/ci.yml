@@ -35,6 +35,9 @@ jobs:
         run: ./mvnw clean test
         env:
           TZ: Asia/Kolkata
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          DATABASE_PASS: ${{ secrets.DATABASE_PASS }}
           JWT_TOKEN_SECRET: ${{ secrets.JWT_TOKEN_SECRET }}
 
   build:
@@ -60,4 +63,7 @@ jobs:
         run: ./mvnw clean package -DskipTests
         env:
           TZ: Asia/Kolkata
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_USER: ${{ secrets.DATABASE_USER }}
+          DATABASE_PASS: ${{ secrets.DATABASE_PASS }}
           JWT_TOKEN_SECRET: ${{ secrets.JWT_TOKEN_SECRET }}
