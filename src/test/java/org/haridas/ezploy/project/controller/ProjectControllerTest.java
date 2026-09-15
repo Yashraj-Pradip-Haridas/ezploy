@@ -7,6 +7,8 @@ import org.haridas.ezploy.project.dto.response.ProjectPageResponse;
 import org.haridas.ezploy.project.dto.response.ProjectResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.model.Project;
+import org.haridas.ezploy.project.security.CustomUserDetailsService;
+import org.haridas.ezploy.project.security.JwtService;
 import org.haridas.ezploy.project.service.ProjectService;
 import org.haridas.ezploy.support.TestDataFactory;
 import org.junit.jupiter.api.Test;
@@ -44,6 +46,12 @@ class ProjectControllerTest {
 
     @MockitoBean
     private ProjectService projectService;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void shouldReturnProjectWhenProjectExists() throws Exception {

@@ -2,6 +2,7 @@ package org.haridas.ezploy.integration;
 
 import org.haridas.ezploy.project.dto.request.CreateProjectRequest;
 import org.haridas.ezploy.project.dto.request.UpdateProjectRequest;
+import org.haridas.ezploy.project.dto.response.LoginResponse;
 import org.haridas.ezploy.project.enums.Framework;
 import org.haridas.ezploy.project.model.Project;
 import org.haridas.ezploy.project.repo.ProjectRepository;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,15 +59,53 @@ public class ProjectIntegrationTest {
     @Test
     void contextLoads() {
     }
+    private String registerAndLogin() throws Exception {
+
+        org.haridas.ezploy.project.dto.request.RegisterRequest registerRequest =
+                TestDataFactory.registerRequest();
+
+        mockMvc.perform(
+                        post("/api/v1/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(registerRequest)
+                                )
+                )
+                .andExpect(status().isCreated());
+
+        MvcResult result = mockMvc.perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(registerRequest)
+                                )
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").exists())
+                .andReturn();
+
+        LoginResponse loginResponse =
+                objectMapper.readValue(
+                        result.getResponse().getContentAsString(),
+                        LoginResponse.class
+                );
+
+        return loginResponse.getToken();
+    }
 
     @Test
     void shouldCreateProjectAndPersistIt() throws Exception {
+        String token = registerAndLogin();
 
         CreateProjectRequest request =
                 TestDataFactory.createProjectRequest();
 
         MvcResult result = mockMvc.perform(
                         post("/api/v1/projects")
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + token
+                                )
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -100,12 +140,17 @@ public class ProjectIntegrationTest {
     @Test
     void shouldReturnProjectWhenProjectExists() throws Exception {
 
+        String token = registerAndLogin();
         Project project = TestDataFactory.project();
 
         projectRepository.save(project);
 
         mockMvc.perform(
                         get("/api/v1/projects/{id}", project.getId())
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + token
+                                )
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id")
@@ -124,10 +169,16 @@ public class ProjectIntegrationTest {
     void shouldReturnNotFoundWhenProjectDoesNotExist()
             throws Exception {
 
+        String token = registerAndLogin();
+
         UUID projectId = UUID.randomUUID();
 
         mockMvc.perform(
                         get("/api/v1/projects/{id}", projectId)
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + token
+                                )
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status")
@@ -140,6 +191,7 @@ public class ProjectIntegrationTest {
 
     @Test
     void shouldUpdateProjectAndPersistChanges() throws Exception {
+        String token = registerAndLogin();
 
         Project project = TestDataFactory.project();
         projectRepository.save(project);
@@ -149,6 +201,10 @@ public class ProjectIntegrationTest {
 
         mockMvc.perform(
                         put("/api/v1/projects/{id}", project.getId())
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + token
+                                )
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
@@ -175,6 +231,7 @@ public class ProjectIntegrationTest {
     @Test
     void shouldDeleteProjectAndRemoveItFromDatabase()
             throws Exception {
+        String token = registerAndLogin();
 
         Project project = TestDataFactory.project();
         projectRepository.save(project);
@@ -183,6 +240,10 @@ public class ProjectIntegrationTest {
 
         mockMvc.perform(
                         delete("/api/v1/projects/{id}", projectId)
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + token
+                                )
                 )
                 .andExpect(status().isNoContent());
 
@@ -192,11 +253,16 @@ public class ProjectIntegrationTest {
     @Test
     void shouldReturnNotFoundWhenDeletingNonExistingProject()
             throws Exception {
+        String token = registerAndLogin();
 
         UUID projectId = UUID.randomUUID();
 
         mockMvc.perform(
                         delete("/api/v1/projects/{id}", projectId)
+                                .header(
+                                        HttpHeaders.AUTHORIZATION,
+                                        "Bearer " + token
+                                )
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status")

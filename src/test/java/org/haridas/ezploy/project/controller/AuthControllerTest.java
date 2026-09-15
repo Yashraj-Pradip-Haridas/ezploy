@@ -4,6 +4,8 @@ import org.haridas.ezploy.common.exception.UserAlreadyExistsException;
 import org.haridas.ezploy.project.dto.request.RegisterRequest;
 import org.haridas.ezploy.project.dto.response.RegisterResponse;
 import org.haridas.ezploy.project.model.User;
+import org.haridas.ezploy.project.security.CustomUserDetailsService;
+import org.haridas.ezploy.project.security.JwtService;
 import org.haridas.ezploy.project.service.AuthService;
 import org.haridas.ezploy.support.TestDataFactory;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,12 @@ public class AuthControllerTest {
     private AuthService authService;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
+    private CustomUserDetailsService customUserDetailsService;
 
     @Test
     void shouldRegisterUser() throws Exception {

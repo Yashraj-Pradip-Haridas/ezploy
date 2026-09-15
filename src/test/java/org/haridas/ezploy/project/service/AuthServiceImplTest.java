@@ -136,10 +136,12 @@ public class AuthServiceImplTest {
         loginRequest.setUsername("username");
         loginRequest.setPassword("password");
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-        .thenReturn(new UsernamePasswordAuthenticationToken("username", "password"));
+        .thenReturn(new UsernamePasswordAuthenticationToken("username", null));
 
+        when(jwtService.generateToken("username"))
+                .thenReturn("jwt-token");
         LoginResponse actual = authService.login(loginRequest);
-        assertThat(actual.getToken()).isEqualTo("TEMP_TOKEN");
+        assertThat(actual.getToken()).isEqualTo("jwt-token");
 
         ArgumentCaptor<UsernamePasswordAuthenticationToken> captor =
                 ArgumentCaptor.forClass(UsernamePasswordAuthenticationToken.class);
